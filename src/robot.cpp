@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <chrono>
-
+#include <cuda.h>
 
 #define GRAVITY 9.81;
 #define MASS_WEIGHT 0.1;
@@ -16,6 +16,7 @@ using std::endl;
 
 void Robot::print_masses() {
     cout << masses << endl;
+    
     return;
 }
 
@@ -172,6 +173,8 @@ Robot::Robot() {
     initialize_masses(total_masses);
     initialize_springs();
 }
+
+
 
 int main() {
     Robot ary;

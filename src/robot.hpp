@@ -28,6 +28,7 @@ public:
     void compute_spring_forces(float time);
     void force_integration();
     float get_spring_length(int spring_idx);
+    void compute_spring_forces_fast(float time);
     bool cuda;
 
 };
