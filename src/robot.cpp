@@ -2,6 +2,8 @@
 #include <eigen3/Eigen/Dense>
 #include <iostream>
 #include <cmath>
+#include <chrono>
+
 
 #define GRAVITY 9.81;
 #define MASS_WEIGHT 0.1;
@@ -26,10 +28,13 @@ void Robot::initialize_masses(int mass_num) {
     // row idx == mass idx, col idx == attribute. attributes are pos, vel, acc, force, init pos. each 3d
     total_masses = mass_num;
     masses = MatrixXd::Zero(mass_num, 15); // Initialize with zeros
+
+    int range = static_cast<int>(std::ceil(std::cbrt(mass_num)));
+
     int n = 0;
-    for (int x = 0; x < 2; ++x) {
-        for (int y = 0; y < 2; ++y) {
-            for (int z = 0; z < 2; ++z) {
+    for (int x = 0; x < range; ++x) {
+        for (int y = 0; y < range; ++y) {
+            for (int z = 0; z < range; ++z) {
                 if (n < mass_num) {
                     masses.row(n).segment(0, 3) << static_cast<float>(x), static_cast<float>(y), static_cast<float>(z);
                     masses.row(n).segment(12, 3) << static_cast<float>(x), static_cast<float>(y), static_cast<float>(z);
@@ -88,7 +93,8 @@ void Robot::compute_spring_forces(float t) {
 }
 
 void Robot::force_integration() {
-    cout << "FORCE INTEGRATION CALL" << endl;
+    // cout << "FORCE INTEGRATION CALL" << endl;
+    #pragma omp parallel for
     for (int i = 0; i < total_masses; i++) {
         masses(i,10) -= GRAVITY;
         if (masses(i, 1) < floor_pos) {
@@ -151,7 +157,7 @@ Robot::Robot(int a, float c, float d, float e, float f, float g, float h) {
 
 // default constructor
 Robot::Robot() {
-    total_masses = 8;
+    total_masses = 1000;
     floor_pos = -0.01;
     dt = 0.01;
     mu_s = 0.9;
@@ -162,17 +168,27 @@ Robot::Robot() {
     initialize_springs();
 }
 
-// int main() {
-//     Robot ary;
-//     cout << "MASSES BEFORE FORCES" << endl; 
-//     ary.print_masses();
+int main() {
+    Robot ary;
+    // cout << "MASSES BEFORE FORCES" << endl; 
+    // ary.print_masses();
     
-//     cout << "MASSES AFTER FORCES" << endl; 
-//     ary.compute_spring_forces(0);
-//     ary.print_masses();
+    cout << "MASSES AFTER FORCES" << endl; 
+    ary.compute_spring_forces(0);
+    // ary.print_masses();
 
-//     cout << "MASSES AFTER integration" << endl; 
-//     ary.force_integration();
-//     ary.print_masses();
+    cout << "MASSES AFTER integration" << endl; 
 
-// }
+    using std::chrono::high_resolution_clock;
+    using std::chrono::duration_cast;
+    using std::chrono::duration;
+    using std::chrono::milliseconds;
+    auto t1 = high_resolution_clock::now();
+
+    ary.force_integration();
+
+    auto t2 = high_resolution_clock::now();
+    duration<double, std::milli> ms_double = t2 - t1;
+    std::cout << ms_double.count() << "s\n";
+
+}
