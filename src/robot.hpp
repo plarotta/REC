@@ -18,7 +18,7 @@ class Robot {
 
 public:
     Robot();
-    Robot(int, float, float, float, float, float, float);
+    Robot(int, float, float, float, float, float, float, bool);
     MatrixXd masses;
     MatrixXd springs;
     int total_masses;
@@ -28,6 +28,7 @@ public:
     void compute_spring_forces(float time);
     void force_integration();
     float get_spring_length(int spring_idx);
+    bool cuda;
 
 };
 

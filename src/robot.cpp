@@ -71,6 +71,7 @@ float Robot::get_spring_length(int s) {
 }
 
 void Robot::compute_spring_forces(float t) {
+    // #pragma omp parallel for
     for (int i = 0; i < total_springs; i ++) {
         float current_length = get_spring_length(i);
         int m1_idx = springs(i,0);
@@ -82,18 +83,20 @@ void Robot::compute_spring_forces(float t) {
         Vector3f spring_f_full = current_l_vect * spring_f_dir;
 
         // update net force on masses attached to spring
-        masses(m1_idx,9) += spring_f_full(0);
-        masses(m1_idx,10) += spring_f_full(1);
-        masses(m1_idx,11) += spring_f_full(2);
+        // #pragma omp critical
+        {
+            masses(m1_idx,9) += spring_f_full(0);
+            masses(m1_idx,10) += spring_f_full(1);
+            masses(m1_idx,11) += spring_f_full(2);
 
-        masses(m2_idx,9) -= spring_f_full(0);
-        masses(m2_idx,10) -= spring_f_full(1);
-        masses(m2_idx,11) -= spring_f_full(2);
+            masses(m2_idx,9) -= spring_f_full(0);
+            masses(m2_idx,10) -= spring_f_full(1);
+            masses(m2_idx,11) -= spring_f_full(2);
+        }   
     }
 }
 
 void Robot::force_integration() {
-    // cout << "FORCE INTEGRATION CALL" << endl;
     #pragma omp parallel for
     for (int i = 0; i < total_masses; i++) {
         masses(i,10) -= GRAVITY;
@@ -143,7 +146,7 @@ void Robot::force_integration() {
     }
 }
 
-Robot::Robot(int a, float c, float d, float e, float f, float g, float h) {
+Robot::Robot(int a, float c, float d, float e, float f, float g, float h, bool j) {
     total_masses = a;
     floor_pos = c;
     dt = d;
@@ -151,31 +154,30 @@ Robot::Robot(int a, float c, float d, float e, float f, float g, float h) {
     mu_k = f;
     ground_k = g;
     damping = h;
+    cuda = j;
     initialize_masses(total_masses);
     initialize_springs();
 }
 
 // default constructor
 Robot::Robot() {
-    total_masses = 1000;
+    total_masses = 5000;
     floor_pos = -0.01;
     dt = 0.01;
     mu_s = 0.9;
     mu_k = 0.7;
     ground_k = 10000;
     damping = 0.996;
+    cuda = false;
     initialize_masses(total_masses);
     initialize_springs();
 }
 
 int main() {
     Robot ary;
-    // cout << "MASSES BEFORE FORCES" << endl; 
-    // ary.print_masses();
     
     cout << "MASSES AFTER FORCES" << endl; 
     ary.compute_spring_forces(0);
-    // ary.print_masses();
 
     cout << "MASSES AFTER integration" << endl; 
 
