@@ -108,41 +108,42 @@ void processInput(GLFWwindow* window) {
         glfwSetWindowShouldClose(window, true);
 }
 
-// int main(int argc, char** argv) {
-//     glfwInit(); // No need to pass argc and argv
+int main(int argc, char** argv) {
+    glfwInit(); // No need to pass argc and argv
 
-//     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-//     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-//     GLFWwindow* window = glfwCreateWindow(800, 600, "Robot Simulation", NULL, NULL);
-//     if (!window) {
-//         glfwTerminate();
-//         return -1;
-//     }
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Robot Simulation", NULL, NULL);
+    if (!window) {
+        glfwTerminate();
+        return -1;
+    }
 
-//     glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window);
 
-//         // Load GLAD
-//     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-//         std::cerr << "Failed to initialize GLAD" << std::endl;
-//         glfwTerminate();
-//         return -1;
-//     }
-//     glClearColor(0.0, 0.0, 0.0, 1.0);
-//     glEnable(GL_DEPTH_TEST);
+        // Load GLAD
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cerr << "Failed to initialize GLAD" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    // glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
 
-//     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-//     while (!glfwWindowShouldClose(window)) {
-//         processInput(window);
+    while (!glfwWindowShouldClose(window)) {
+        processInput(window);
 
-//         display();
+        display();
 
-//         glfwSwapBuffers(window);
-//         glfwPollEvents();
-//     }
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
 
-//     glfwTerminate();
-//     return 0;
-// }
+    glfwTerminate();
+    return 0;
+}

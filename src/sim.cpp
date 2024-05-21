@@ -53,7 +53,7 @@ void Simulation::run_simulation() {
         auto current_time = std::chrono::high_resolution_clock::now();
         auto elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>>(current_time - start_time).count();
 
-        cout << "SIM TIME: " << sim_time << " | " <<"REAL TIME: " << std::fixed << std::setprecision(2) << elapsed_time << endl;
+        cout << "SIM TIME: " << sim_time << " | " << "REAL TIME: " << std::fixed << std::setprecision(2) << elapsed_time << endl;
         // update each robot in the simulation
         for (int r_idx = 0; r_idx < num_robots; r_idx ++){
             robots[r_idx].compute_spring_forces(sim_time);

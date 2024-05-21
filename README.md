@@ -10,3 +10,7 @@ Compile+run with g++ (with multi-threading):
 On linux, to use openGL for rendering compile via 
 
 ```g++ src/viz.cpp src/robot.cpp src/glad.c -o viz_test.exe -ldl -lglfw -lGL```
+
+On mac:
+
+```g++ src/viz.cpp src/robot.cpp src/glad.c -o viz_test.exe -L/usr/local/lib/ -lglfw -framework OpenGL```
