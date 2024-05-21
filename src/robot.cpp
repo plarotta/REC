@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cmath>
 #include <chrono>
-#include <cuda.h>
 
 #define GRAVITY 9.81;
 #define MASS_WEIGHT 0.1;
@@ -72,7 +71,7 @@ float Robot::get_spring_length(int s) {
 }
 
 void Robot::compute_spring_forces(float t) {
-    // #pragma omp parallel for
+    #pragma omp parallel for
     for (int i = 0; i < total_springs; i ++) {
         float current_length = get_spring_length(i);
         int m1_idx = springs(i,0);
@@ -84,7 +83,7 @@ void Robot::compute_spring_forces(float t) {
         Vector3f spring_f_full = current_l_vect * spring_f_dir;
 
         // update net force on masses attached to spring
-        // #pragma omp critical
+        #pragma omp critical
         {
             masses(m1_idx,9) += spring_f_full(0);
             masses(m1_idx,10) += spring_f_full(1);
@@ -162,7 +161,7 @@ Robot::Robot(int a, float c, float d, float e, float f, float g, float h, bool j
 
 // default constructor
 Robot::Robot() {
-    total_masses = 5000;
+    total_masses = 8;
     floor_pos = -0.01;
     dt = 0.01;
     mu_s = 0.9;
@@ -176,24 +175,20 @@ Robot::Robot() {
 
 
 
-int main() {
-    Robot ary;
+// int main() {
+//     cout << "Entered main()..." << endl; 
+//     Robot ary;
     
-    cout << "MASSES AFTER FORCES" << endl; 
-    ary.compute_spring_forces(0);
+//     using std::chrono::high_resolution_clock;
+//     using std::chrono::duration_cast;
+//     using std::chrono::duration;
+//     using std::chrono::milliseconds;
+//     auto t1 = high_resolution_clock::now();
+//     ary.compute_spring_forces(0);
+//     ary.force_integration();
 
-    cout << "MASSES AFTER integration" << endl; 
-
-    using std::chrono::high_resolution_clock;
-    using std::chrono::duration_cast;
-    using std::chrono::duration;
-    using std::chrono::milliseconds;
-    auto t1 = high_resolution_clock::now();
-
-    ary.force_integration();
-
-    auto t2 = high_resolution_clock::now();
-    duration<double, std::milli> ms_double = t2 - t1;
-    std::cout << ms_double.count() << "s\n";
-
-}
+//     auto t2 = high_resolution_clock::now();
+//     duration<double, std::milli> ms_double = t2 - t1;
+//     std::cout << "Clock time for force calcs + numerical integration: " << ms_double.count() << "ms\n";
+//     return 0;
+// }

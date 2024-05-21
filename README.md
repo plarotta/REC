@@ -1,8 +1,11 @@
 # Simple robot simulator in C++
 
-Compile+run via 
+Compile+run with g++ (with multi-threading):
 
 ```g++ src/robot.cpp -o rob_test.exe -fopenmp && ./rob_test.exe```
+
+(omit the -fopenmp flag to disable multi-threading. I had issues using openmp with clang...)
+
 
 On linux, to use openGL for rendering compile via 
 
